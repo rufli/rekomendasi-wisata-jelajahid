@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="shortcut icon" href="logo.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <title>Jelajah.Id</title>
+
+  </head>
+  <body>
+    <header>
+      <div class="main-header container">
+
+        <a class="brand-name" href="#/">Jelajah.Id</a>
+
+        <nav id="navigation-drawer" class="navigation-drawer">
+          <ul id="nav-list" class="nav-list">
+            <li><a href="#/">Beranda</a></li>
+            <li><a href="#/rekomendasi">Rekomendasi</a></li>
+            <li><a href="#/rencana">Rencana</a></li>
+            <li><a href="#/prediksi">Prediksi</a></li>
+          </ul>
+        </nav>
+
+        </div>
+    </header>
+
+    <main tabIndex="-1" id="main-content" class="main-content"></main>
+
+    <footer class="footer">
+      <div class="footer-container">
+        
+        <!-- Kolom kiri -->
+        <div class="footer-left">
+          <a href="#/" class="footer-brand">
+            <h3>Jelajah.Id</h3>
+          </a>
+          <p>
+            <strong>Jelajah.id</strong> adalah platform gratis untuk berbagi dan menemukan rekomendasi wisata serta itinerary yang disusun secara cerdas, tempat di mana siapa saja bisa menjelajahi destinasi dan karya digital dari komunitas pelancong kreatif di seluruh Indonesia.
+          </p>
+        </div>
+
+        <!-- Kolom tengah -->
+        <div class="footer-center">
+          <div class="social-icons">
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-tiktok"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+          </div>
+        </div>
+
+        <!-- Kolom kanan -->
+        <div class="footer-right">
+          <p>2025 Dicoding</p>
+        </div>
+        
+      </div>
+    </footer>
+
+    <script>
+      function setActiveNavLink() {
+        const navLinks = document.querySelectorAll('.nav-list a');
+        const currentHash = window.location.hash || '#/';
+
+        navLinks.forEach(link => {
+          if (link.getAttribute('href') === currentHash) {
+            link.classList.add('active');
+          } else {
+            link.classList.remove('active');
+          }
+        });
+      }
+
+      // Set active link saat halaman pertama kali dimuat
+      window.addEventListener('load', setActiveNavLink);
+
+      // Update active link saat hash berubah
+      window.addEventListener('hashchange', setActiveNavLink);
+    </script>
+
+  </body>
+</html>
