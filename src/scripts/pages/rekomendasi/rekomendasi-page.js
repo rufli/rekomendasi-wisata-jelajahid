@@ -38,7 +38,7 @@ class RekomendasiPage {
         </aside>
 
         <main class="content-area">
-          <h2 id="content-title">Wisata Semua Wisata</h2>
+          <h2 id="content-title"> Semua Wisata</h2>
           <div id="rekomendasi-list"></div>
         </main>
       </section>

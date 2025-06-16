@@ -1,6 +1,6 @@
 import CONFIG from '../config.js';
 
-// Function untuk mendapatkan rekomendasi
+// ✅ GET - Rekomendasi dari cluster tertentu
 export async function getRecommendations(clusterId) {
   const BASE = CONFIG.ML_BASE_URL;
   const url = `${BASE}/get-recommendations/${clusterId}`;
@@ -38,7 +38,7 @@ export async function getRecommendations(clusterId) {
   }
 }
 
-// Function untuk generate itinerary
+// ✅ GET - Generate itinerary otomatis dari cluster tertentu
 export async function generateItinerary(clusterId) {
   const BASE = CONFIG.ML_BASE_URL;
   const url = `${BASE}/generate-itinerary/${clusterId}`;
@@ -65,14 +65,14 @@ export async function generateItinerary(clusterId) {
     const json = await response.json();
     console.log('✅ Data itinerary:', json);
 
-    return json; // Return seluruh response karena struktur bisa bervariasi
+    return json;
   } catch (error) {
     console.error('❌ Gagal generate itinerary:', error);
     throw error;
   }
 }
 
-// Function untuk menambahkan rencana perjalanan ke backend
+// ✅ POST - Tambahkan rencana perjalanan baru ke cluster
 export async function addPlan(clusterId, itineraryData) {
   const BASE = CONFIG.ML_BASE_URL;
   const url = `${BASE}/add-plan/${clusterId}`;
@@ -108,7 +108,7 @@ export async function addPlan(clusterId, itineraryData) {
   }
 }
 
-// Function untuk predict cluster berdasarkan input user
+// ✅ POST - Prediksi cluster berdasarkan input pengguna
 export async function predictCluster(userPreferences) {
   const BASE = CONFIG.ML_BASE_URL;
   const url = `${BASE}/predict-cluster`;
@@ -140,6 +140,74 @@ export async function predictCluster(userPreferences) {
     return json;
   } catch (error) {
     console.error('❌ Gagal predict cluster:', error);
+    throw error;
+  }
+}
+
+// ✅ GET - Ambil semua rencana yang sudah ditambahkan
+export async function getAllPlans() {
+  const BASE = CONFIG.ML_BASE_URL;
+  const url = `${BASE}/get-added-plans`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': 'true',
+        'Accept': 'application/json'
+      }
+    });
+
+    console.log('Get All Plans Status:', response.status);
+    console.log('URL yang dipanggil:', url);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.log('Error response:', errorText);
+      throw new Error(`HTTP error ${response.status}: ${errorText.slice(0, 100)}`);
+    }
+
+    const json = await response.json();
+    console.log('✅ Semua rencana diambil:', json);
+
+    return json.plans || [];
+  } catch (error) {
+    console.error('❌ Gagal ambil semua rencana:', error);
+    throw error;
+  }
+}
+
+// ✅ GET - Ambil semua rencana dari cluster tertentu
+export async function getPlansByCluster(clusterId) {
+  const BASE = CONFIG.ML_BASE_URL;
+  const url = `${BASE}/plans/${clusterId}`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': 'true',
+        'Accept': 'application/json'
+      }
+    });
+
+    console.log('Get Plans by Cluster Status:', response.status);
+    console.log('URL yang dipanggil:', url);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.log('Error response:', errorText);
+      throw new Error(`HTTP error ${response.status}: ${errorText.slice(0, 100)}`);
+    }
+
+    const json = await response.json();
+    console.log(`✅ Rencana dari cluster ${clusterId} diambil:`, json);
+
+    return json.plans || [];
+  } catch (error) {
+    console.error(`❌ Gagal ambil rencana dari cluster ${clusterId}:`, error);
     throw error;
   }
 }

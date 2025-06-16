@@ -1,224 +1,429 @@
-import { generateItinerary } from '../../data/api-ml.js';
+import { 
+  getPlansByCluster, 
+  getAllPlans, 
+  addPlan,
+  generateItinerary,
+  getRecommendations
+} from '../../data/api-ml.js';
 
 class RencanaPage {
   async render() {
     return `
-      <section style="max-width: 1000px; margin: 0 auto; padding: 20px;">
-        <h2>📅 Buat Rencana Perjalanan Wisata</h2>
+      <style>
+        .plans-container {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 20px;
+        }
         
-        <div style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-          <h3>Pilih Cluster untuk Membuat Rencana Perjalanan</h3>
-          <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;">
-            <button class="cluster-btn" data-cluster="0" 
-                    style="padding: 10px 20px; border: 2px solid #007bff; background: white; border-radius: 6px; cursor: pointer;">
-              Cluster 1 - Backpacker
-            </button>
-            <button class="cluster-btn" data-cluster="1" 
-                    style="padding: 10px 20px; border: 2px solid #28a745; background: white; border-radius: 6px; cursor: pointer;">
-              Cluster 2 - Mid Range
-            </button>
-            <button class="cluster-btn" data-cluster="2" 
-                    style="padding: 10px 20px; border: 2px solid #ffc107; background: white; border-radius: 6px; cursor: pointer;">
-              Cluster 3 - Premium
+        .filter-section, .add-section {
+          background: #f9f9f9;
+          padding: 20px;
+          border-radius: 8px;
+          margin-bottom: 20px;
+        }
+        
+        .section-title {
+          margin-top: 0;
+          color: #333;
+        }
+        
+        .form-group {
+          margin-bottom: 15px;
+        }
+        
+        label {
+          display: block;
+          margin-bottom: 5px;
+          font-weight: bold;
+        }
+        
+        input, select, textarea {
+          width: 100%;
+          padding: 8px;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          box-sizing: border-box;
+        }
+        
+        button {
+          padding: 10px 20px;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+          font-size: 1em;
+        }
+        
+        .primary-btn {
+          background: #007bff;
+          color: white;
+        }
+        
+        .success-btn {
+          background: #28a745;
+          color: white;
+        }
+        
+        .plans-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+          gap: 20px;
+          margin-top: 20px;
+        }
+        
+        .plan-card {
+          border: 1px solid #e0e0e0;
+          border-radius: 8px;
+          padding: 15px;
+          background: white;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .plan-title {
+          margin: 0 0 8px 0;
+          color: #333;
+          font-size: 1.2em;
+        }
+        
+        .plan-description {
+          color: #666;
+          margin: 0 0 12px 0;
+          font-size: 0.9em;
+        }
+        
+        .plan-meta {
+          display: flex;
+          gap: 8px;
+          margin-bottom: 12px;
+        }
+        
+        .cluster-badge {
+          background: #e0f7fa;
+          color: #00838f;
+          padding: 4px 8px;
+          border-radius: 4px;
+          font-size: 0.8em;
+        }
+        
+        .days-badge {
+          background: #e8f5e9;
+          color: #2e7d32;
+          padding: 4px 8px;
+          border-radius: 4px;
+          font-size: 0.8em;
+        }
+        
+        .plan-actions {
+          display: flex;
+          gap: 10px;
+        }
+        
+        .action-btn {
+          padding: 6px 12px;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+          font-size: 0.9em;
+        }
+        
+        .info-btn {
+          background: #17a2b8;
+          color: white;
+        }
+        
+        .secondary-btn {
+          background: #6c757d;
+          color: white;
+        }
+        
+        .loading {
+          text-align: center;
+          padding: 20px;
+          display: none;
+        }
+        
+        .error-message {
+          background: #f8d7da;
+          padding: 15px;
+          border-radius: 8px;
+          margin-bottom: 20px;
+          color: #721c24;
+          display: none;
+        }
+        
+        .empty-state {
+          text-align: center;
+          padding: 40px 20px;
+          color: #6c757d;
+        }
+        
+        .success-message {
+          background: #d4edda;
+          color: #155724;
+          padding: 15px;
+          border-radius: 8px;
+          margin-bottom: 20px;
+        }
+      </style>
+      
+      <section class="plans-container">
+        <h2>Kelola Rencana Perjalanan</h2>
+        
+        <div style="display: flex; gap: 20px; margin-bottom: 30px;">
+          <div class="filter-section" style="flex: 1;">
+            <h3 class="section-title">Filter Rencana</h3>
+            <div class="form-group">
+              <label for="cluster-filter">Cluster:</label>
+              <select id="cluster-filter">
+                <option value="all">Semua Cluster</option>
+                <option value="0">Cluster 0</option>
+                <option value="1">Cluster 1</option>
+                <option value="2">Cluster 2</option>
+                <option value="3">Cluster 3</option>
+              </select>
+            </div>
+            <button id="load-plans-btn" class="primary-btn">
+              🔍 Muat Rencana
             </button>
           </div>
           
-          <div style="margin-bottom: 15px;">
-            <label for="duration" style="display: block; margin-bottom: 5px; font-weight: bold;">Durasi Perjalanan (hari):</label>
-            <select id="duration" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
-              <option value="1">1 Hari</option>
-              <option value="2">2 Hari</option>
-              <option value="3" selected>3 Hari</option>
-              <option value="4">4 Hari</option>
-              <option value="5">5 Hari</option>
-            </select>
+          <div class="add-section" style="flex: 1;">
+            <h3 class="section-title">Tambah Rencana Baru</h3>
+            <form id="add-plan-form">
+              <div class="form-group">
+                <label for="plan-cluster">Cluster:</label>
+                <select id="plan-cluster" name="cluster" required>
+                  <option value="">-- Pilih Cluster --</option>
+                  <option value="0">Cluster 0</option>
+                  <option value="1">Cluster 1</option>
+                  <option value="2">Cluster 2</option>
+                  <option value="3">Cluster 3</option>
+                </select>
+              </div>
+              
+              <div class="form-group">
+                <label for="plan-name">Nama Rencana:</label>
+                <input type="text" id="plan-name" name="name" required>
+              </div>
+              
+              <div class="form-group">
+                <label for="plan-desc">Deskripsi:</label>
+                <textarea id="plan-desc" name="description" rows="3"></textarea>
+              </div>
+              
+              <div class="form-group">
+                <label for="plan-days">Jumlah Hari:</label>
+                <input type="number" id="plan-days" name="days" min="1" required>
+              </div>
+              
+              <button type="submit" class="success-btn">
+                ➕ Tambah Rencana
+              </button>
+            </form>
           </div>
-          
-          <button id="generate-btn" 
-                  style="background: #007bff; color: white; padding: 12px 30px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px;" 
-                  disabled>
-            🎯 Buat Rencana Perjalanan
-          </button>
         </div>
         
-        <div id="loading" style="display: none; text-align: center; padding: 40px;">
-          <div style="display: inline-block; width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #007bff; border-radius: 50%; animation: spin 1s linear infinite;"></div>
-          <p style="margin-top: 15px;">⏳ Membuat rencana perjalanan terbaik untuk Anda...</p>
+        <div id="loading" class="loading">
+          <p>⏳ Memuat data...</p>
         </div>
         
-        <div id="itinerary-result">
-          <!-- Rencana perjalanan akan ditampilkan di sini -->
-        </div>
+        <div id="error-message" class="error-message"></div>
+        
+        <div id="plans-container"></div>
       </section>
     `;
   }
 
   async afterRender() {
-    const clusterBtns = document.querySelectorAll('.cluster-btn');
-    const generateBtn = document.querySelector('#generate-btn');
-    const loading = document.querySelector('#loading');
-    const itineraryResult = document.querySelector('#itinerary-result');
-    const durationSelect = document.querySelector('#duration');
-    
-    let selectedCluster = null;
+    const loadPlansBtn = document.getElementById('load-plans-btn');
+    const clusterFilter = document.getElementById('cluster-filter');
+    const addPlanForm = document.getElementById('add-plan-form');
+    const loadingElement = document.getElementById('loading');
+    const errorElement = document.getElementById('error-message');
+    const plansContainer = document.getElementById('plans-container');
 
-    // Handle cluster selection
-    clusterBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        // Remove active class from all buttons
-        clusterBtns.forEach(b => b.classList.remove('active'));
-        
-        // Add active class to clicked button
-        btn.classList.add('active');
-        
-        // Store selected cluster
-        selectedCluster = parseInt(btn.dataset.cluster);
-        
-        // Enable generate button
-        generateBtn.disabled = false;
-        generateBtn.style.opacity = '1';
-      });
-    });
-
-    // Handle generate itinerary
-    generateBtn.addEventListener('click', async () => {
-      if (selectedCluster === null) {
-        alert('Silakan pilih cluster terlebih dahulu!');
-        return;
-      }
-
-      const duration = parseInt(durationSelect.value);
+    // Fungsi untuk render kartu rencana
+    const renderPlanCard = (plan) => {
+      // Debugging: Tampilkan seluruh object plan di console
+      console.log('Plan object:', plan);
       
-      // Show loading
-      loading.style.display = 'block';
-      itineraryResult.innerHTML = '';
-      generateBtn.disabled = true;
+      // Gunakan property yang sesuai dengan response API
+      const planName = plan.Place_Name || plan.name || 'Unnamed Plan';
+      const description = plan.Description || plan.description || 'No description';
+      const clusterId = plan.cluster_id || plan.cluster || 'N/A';
+      const days = plan.days || plan.total_days || 1;
+
+      return `
+        <div class="plan-card">
+          <h4 class="plan-title">${planName}</h4>
+          <p class="plan-description">${description}</p>
+          <div class="plan-meta">
+            <span class="cluster-badge">Cluster ${clusterId}</span>
+            <span class="days-badge">${days} Hari</span>
+          </div>
+          <div class="plan-actions">
+            <button class="action-btn info-btn generate-btn" data-cluster="${clusterId}">
+              🗺️ Generate Itinerary
+            </button>
+            <button class="action-btn secondary-btn recommend-btn" data-cluster="${clusterId}">
+              🔍 Rekomendasi
+            </button>
+          </div>
+        </div>
+      `;
+    };
+
+    // Fungsi untuk memuat rencana
+    const loadPlans = async () => {
+      const clusterId = clusterFilter.value;
+      console.log(`Memuat rencana untuk cluster ${clusterId}...`);
+      
+      loadingElement.style.display = 'block';
+      errorElement.style.display = 'none';
+      plansContainer.innerHTML = '';
 
       try {
-        console.log(`📅 Membuat rencana perjalanan untuk cluster ${selectedCluster}, duration: ${duration} days`);
+        let plans = [];
         
-        const itineraryData = await generateItinerary(selectedCluster);
-        
-        // Process and display itinerary
-        this.displayItinerary(itineraryData, duration, selectedCluster);
-        
-      } catch (error) {
-        console.error('Error membuat rencana perjalanan:', error);
-        itineraryResult.innerHTML = `
-          <div style="background: #f8d7da; padding: 20px; border-radius: 8px; border: 1px solid #f1aeb5; color: #721c24;">
-            <h4>❌ Gagal Membuat Rencana Perjalanan</h4>
-            <p>${error.message}</p>
-            <p>Silakan coba lagi atau hubungi administrator.</p>
+        if (clusterId === 'all') {
+          try {
+            const response = await getAllPlans();
+            console.log('Response all plans:', response);
+            plans = response?.plans || response || [];
+          } catch (error) {
+            console.warn('Gagal mengambil semua rencana, mencoba alternatif...');
+            // Fallback: Ambil per cluster lalu gabungkan
+            const clusters = [0, 1, 2, 3];
+            const allPlans = [];
+            for (const cluster of clusters) {
+              const res = await getPlansByCluster(cluster);
+              allPlans.push(...(res?.plans || res || []));
+            }
+            plans = allPlans;
+          }
+        } else {
+          const response = await getPlansByCluster(clusterId);
+          console.log(`Response cluster ${clusterId}:`, response);
+          plans = response?.plans || response || [];
+        }
+
+        console.log('Plans to render:', plans);
+        if (plans.length > 0) console.log('Contoh item pertama:', plans[0]);
+
+        if (!plans || plans.length === 0) {
+          plansContainer.innerHTML = `
+            <div class="empty-state">
+              <p>📭 Tidak ada rencana perjalanan yang tersedia</p>
+              <p>Silakan tambahkan rencana baru</p>
+            </div>
+          `;
+          return;
+        }
+
+        plansContainer.innerHTML = `
+          <h3>Daftar Rencana ${clusterId === 'all' ? '' : 'Cluster ' + clusterId}</h3>
+          <div class="plans-grid">
+            ${plans.map(plan => renderPlanCard(plan)).join('')}
           </div>
         `;
+
+      } catch (error) {
+        console.error('Error loading plans:', error);
+        errorElement.textContent = `Gagal memuat rencana: ${error.message}`;
+        errorElement.style.display = 'block';
       } finally {
-        loading.style.display = 'none';
-        generateBtn.disabled = false;
+        loadingElement.style.display = 'none';
+      }
+    };
+
+    // Event listener untuk tombol muat rencana
+    loadPlansBtn.addEventListener('click', loadPlans);
+
+    // Event listener untuk form tambah rencana
+    addPlanForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const formData = new FormData(addPlanForm);
+      const newPlan = {
+        cluster_id: formData.get('cluster'),
+        name: formData.get('name'),
+        description: formData.get('description'),
+        days: parseInt(formData.get('days'))
+      };
+
+      loadingElement.style.display = 'block';
+      errorElement.style.display = 'none';
+
+      try {
+        const result = await addPlan(newPlan.cluster_id, newPlan);
+        console.log('Plan added:', result);
+        
+        // Reset form
+        addPlanForm.reset();
+        
+        // Tampilkan pesan sukses
+        const successMsg = document.createElement('div');
+        successMsg.className = 'success-message';
+        successMsg.textContent = '✅ Rencana berhasil ditambahkan!';
+        plansContainer.prepend(successMsg);
+        
+        // Muat ulang daftar rencana
+        await loadPlans();
+        
+        // Hilangkan pesan setelah 3 detik
+        setTimeout(() => successMsg.remove(), 3000);
+        
+      } catch (error) {
+        console.error('Error adding plan:', error);
+        errorElement.textContent = `Gagal menambahkan rencana: ${error.message}`;
+        errorElement.style.display = 'block';
+      } finally {
+        loadingElement.style.display = 'none';
       }
     });
-  }
 
-  displayItinerary(data, duration, clusterId) {
-    const itineraryResult = document.querySelector('#itinerary-result');
-    
-    // Jika data memiliki struktur itinerary yang sudah jadi
-    if (data.itinerary) {
-      this.displayStructuredItinerary(data.itinerary);
-      return;
-    }
-    
-    // Jika data berupa list places, kita buat rencana perjalanan sendiri
-    const places = data.places || data.recommendations || data;
-    
-    if (!places || !Array.isArray(places)) {
-      throw new Error('Data rencana perjalanan tidak valid');
-    }
-
-    // Bagi places berdasarkan durasi
-    const placesPerDay = Math.ceil(places.length / duration);
-    const itinerary = [];
-    
-    for (let day = 0; day < duration; day++) {
-      const dayPlaces = places.slice(day * placesPerDay, (day + 1) * placesPerDay);
-      itinerary.push({
-        day: day + 1,
-        places: dayPlaces
-      });
-    }
-
-    // Display rencana perjalanan
-    itineraryResult.innerHTML = `
-      <div style="background: white; border-radius: 12px; padding: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-        <div style="text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px solid #eee;">
-          <h3 style="color: #007bff; margin: 0;">🎯 Rencana Perjalanan Wisata Anda</h3>
-          <p style="color: #666; margin: 5px 0 0 0;">Cluster ${clusterId} • ${duration} Hari • ${places.length} Destinasi</p>
-        </div>
+    // Delegasi event untuk tombol generate itinerary dan rekomendasi
+    plansContainer.addEventListener('click', async (e) => {
+      const generateBtn = e.target.closest('.generate-btn');
+      const recommendBtn = e.target.closest('.recommend-btn');
+      
+      if (generateBtn) {
+        const clusterId = generateBtn.dataset.cluster;
+        loadingElement.style.display = 'block';
         
-        ${itinerary.map(dayData => `
-          <div class="day-card">
-            <h4 style="color: #007bff; margin: 0 0 15px 0; display: flex; align-items: center;">
-              <span style="background: #007bff; color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; margin-right: 10px; font-size: 14px;">
-                ${dayData.day}
-              </span>
-              Hari ${dayData.day}
-            </h4>
-            
-            ${dayData.places.map((place, index) => `
-              <div class="place-item">
-                <div style="display: flex; justify-content: between; align-items: flex-start; margin-bottom: 8px;">
-                  <h5 style="margin: 0; color: #333; flex: 1;">${place.Place_Name || `Destinasi ${index + 1}`}</h5>
-                  <span style="background: #007bff; color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px;">
-                    ${place.Category || 'Wisata'}
-                  </span>
-                </div>
-                
-                <div style="display: flex; gap: 15px; margin-bottom: 8px; font-size: 14px; color: #666;">
-                  <span>📍 ${place.City || 'Kota tidak tersedia'}</span>
-                  <span>⭐ ${place.Rating || 'N/A'}</span>
-                  <span>💰 ${place.Price ? `Rp ${place.Price.toLocaleString()}` : 'Gratis'}</span>
-                </div>
-                
-                ${place.Description ? `<p style="margin: 8px 0 0 0; font-size: 14px; color: #555; line-height: 1.4;">${place.Description}</p>` : ''}
-              </div>
-            `).join('')}
-          </div>
-        `).join('')}
+        try {
+          const itinerary = await generateItinerary(clusterId);
+          console.log('Generated itinerary:', itinerary);
+          alert(`Itinerary untuk Cluster ${clusterId} berhasil digenerate!\n\nLihat console untuk detail.`);
+        } catch (error) {
+          console.error('Error generating itinerary:', error);
+          errorElement.textContent = `Gagal generate itinerary: ${error.message}`;
+          errorElement.style.display = 'block';
+        } finally {
+          loadingElement.style.display = 'none';
+        }
+      }
+      
+      if (recommendBtn) {
+        const clusterId = recommendBtn.dataset.cluster;
+        loadingElement.style.display = 'block';
         
-        <div style="background: #e8f5e8; padding: 20px; border-radius: 8px; margin-top: 20px;">
-          <h4 style="color: #28a745; margin: 0 0 10px 0;">💡 Tips Perjalanan</h4>
-          <ul style="margin: 0; padding-left: 20px; color: #555;">
-            <li>Periksa jam buka setiap destinasi sebelum berkunjung</li>
-            <li>Siapkan budget lebih untuk transportasi antar lokasi</li>
-            <li>Gunakan aplikasi maps untuk navigasi yang lebih mudah</li>
-            <li>Jangan lupa membawa kamera untuk mengabadikan momen!</li>
-          </ul>
-        </div>
-      </div>
-    `;
-  }
+        try {
+          const recommendations = await getRecommendations(clusterId);
+          console.log('Recommendations:', recommendations);
+          alert(`Rekomendasi untuk Cluster ${clusterId} berhasil dimuat!\n\nLihat console untuk detail.`);
+        } catch (error) {
+          console.error('Error getting recommendations:', error);
+          errorElement.textContent = `Gagal memuat rekomendasi: ${error.message}`;
+          errorElement.style.display = 'block';
+        } finally {
+          loadingElement.style.display = 'none';
+        }
+      }
+    });
 
-  displayStructuredItinerary(itinerary) {
-    const itineraryResult = document.querySelector('#itinerary-result');
-    
-    itineraryResult.innerHTML = `
-      <div style="background: white; border-radius: 12px; padding: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-        <h3 style="text-align: center; color: #007bff; margin-bottom: 30px;">🎯 Rencana Perjalanan Wisata Anda</h3>
-        
-        ${itinerary.map(day => `
-          <div class="day-card">
-            <h4 style="color: #007bff; margin-bottom: 15px;">Hari ${day.day}</h4>
-            
-            ${day.activities.map(activity => `
-              <div class="place-item">
-                <h5 style="margin: 0 0 8px 0;">${activity.name}</h5>
-                <p style="margin: 0; color: #666; font-size: 14px;">${activity.description}</p>
-                ${activity.time ? `<span style="color: #007bff; font-size: 12px;">⏰ ${activity.time}</span>` : ''}
-              </div>
-            `).join('')}
-          </div>
-        `).join('')}
-      </div>
-    `;
+    // Muat rencana secara otomatis saat pertama kali load
+    await loadPlans();
   }
 }
 
