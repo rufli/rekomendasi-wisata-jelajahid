@@ -78,6 +78,14 @@ export async function addPlan(clusterId, itineraryData) {
   const url = `${BASE}/add-plan/${clusterId}`;
 
   try {
+    const requestData = {
+      cluster_id: clusterId,
+      name: itineraryData.name,
+      description: itineraryData.description,
+      days: itineraryData.days,
+      places: itineraryData.places || []
+    };
+
     const response = await fetch(url, {
       method: 'POST',
       headers: {
@@ -85,12 +93,12 @@ export async function addPlan(clusterId, itineraryData) {
         'ngrok-skip-browser-warning': 'true',
         'Accept': 'application/json'
       },
-      body: JSON.stringify(itineraryData)
+      body: JSON.stringify(requestData)
     });
 
     console.log('Add Plan Status:', response.status);
     console.log('URL yang dipanggil:', url);
-    console.log('Data itinerary yang dikirim:', itineraryData);
+    console.log('Data itinerary yang dikirim:', requestData);
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -145,6 +153,8 @@ export async function predictCluster(userPreferences) {
 }
 
 // ✅ GET - Ambil semua rencana yang sudah ditambahkan
+
+// ✅ GET - Get all added plans
 export async function getAllPlans() {
   const BASE = CONFIG.ML_BASE_URL;
   const url = `${BASE}/get-added-plans`;
@@ -155,25 +165,17 @@ export async function getAllPlans() {
       headers: {
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
-        'Accept': 'application/json'
       }
     });
 
-    console.log('Get All Plans Status:', response.status);
-    console.log('URL yang dipanggil:', url);
-
     if (!response.ok) {
-      const errorText = await response.text();
-      console.log('Error response:', errorText);
-      throw new Error(`HTTP error ${response.status}: ${errorText.slice(0, 100)}`);
+      throw new Error(`HTTP error ${response.status}`);
     }
 
     const json = await response.json();
-    console.log('✅ Semua rencana diambil:', json);
-
-    return json.plans || [];
+    return json.plans || []; // Return the array of plans directly
   } catch (error) {
-    console.error('❌ Gagal ambil semua rencana:', error);
+    console.error('Failed to get all plans:', error);
     throw error;
   }
 }

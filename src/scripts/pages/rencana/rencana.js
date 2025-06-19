@@ -9,168 +9,11 @@ import {
 class RencanaPage {
   async render() {
     return `
-      <style>
-        .plans-container {
-          max-width: 1200px;
-          margin: 0 auto;
-          padding: 20px;
-        }
-        
-        .filter-section, .add-section {
-          background: #f9f9f9;
-          padding: 20px;
-          border-radius: 8px;
-          margin-bottom: 20px;
-        }
-        
-        .section-title {
-          margin-top: 0;
-          color: #333;
-        }
-        
-        .form-group {
-          margin-bottom: 15px;
-        }
-        
-        label {
-          display: block;
-          margin-bottom: 5px;
-          font-weight: bold;
-        }
-        
-        input, select, textarea {
-          width: 100%;
-          padding: 8px;
-          border: 1px solid #ddd;
-          border-radius: 4px;
-          box-sizing: border-box;
-        }
-        
-        button {
-          padding: 10px 20px;
-          border: none;
-          border-radius: 4px;
-          cursor: pointer;
-          font-size: 1em;
-        }
-        
-        .primary-btn {
-          background: #007bff;
-          color: white;
-        }
-        
-        .success-btn {
-          background: #28a745;
-          color: white;
-        }
-        
-        .plans-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-          gap: 20px;
-          margin-top: 20px;
-        }
-        
-        .plan-card {
-          border: 1px solid #e0e0e0;
-          border-radius: 8px;
-          padding: 15px;
-          background: white;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-        
-        .plan-title {
-          margin: 0 0 8px 0;
-          color: #333;
-          font-size: 1.2em;
-        }
-        
-        .plan-description {
-          color: #666;
-          margin: 0 0 12px 0;
-          font-size: 0.9em;
-        }
-        
-        .plan-meta {
-          display: flex;
-          gap: 8px;
-          margin-bottom: 12px;
-        }
-        
-        .cluster-badge {
-          background: #e0f7fa;
-          color: #00838f;
-          padding: 4px 8px;
-          border-radius: 4px;
-          font-size: 0.8em;
-        }
-        
-        .days-badge {
-          background: #e8f5e9;
-          color: #2e7d32;
-          padding: 4px 8px;
-          border-radius: 4px;
-          font-size: 0.8em;
-        }
-        
-        .plan-actions {
-          display: flex;
-          gap: 10px;
-        }
-        
-        .action-btn {
-          padding: 6px 12px;
-          border: none;
-          border-radius: 4px;
-          cursor: pointer;
-          font-size: 0.9em;
-        }
-        
-        .info-btn {
-          background: #17a2b8;
-          color: white;
-        }
-        
-        .secondary-btn {
-          background: #6c757d;
-          color: white;
-        }
-        
-        .loading {
-          text-align: center;
-          padding: 20px;
-          display: none;
-        }
-        
-        .error-message {
-          background: #f8d7da;
-          padding: 15px;
-          border-radius: 8px;
-          margin-bottom: 20px;
-          color: #721c24;
-          display: none;
-        }
-        
-        .empty-state {
-          text-align: center;
-          padding: 40px 20px;
-          color: #6c757d;
-        }
-        
-        .success-message {
-          background: #d4edda;
-          color: #155724;
-          padding: 15px;
-          border-radius: 8px;
-          margin-bottom: 20px;
-        }
-      </style>
-      
       <section class="plans-container">
         <h2>Kelola Rencana Perjalanan</h2>
         
-        <div style="display: flex; gap: 20px; margin-bottom: 30px;">
-          <div class="filter-section" style="flex: 1;">
+        <div class="flex-container">
+          <div class="filter-section">
             <h3 class="section-title">Filter Rencana</h3>
             <div class="form-group">
               <label for="cluster-filter">Cluster:</label>
@@ -187,7 +30,7 @@ class RencanaPage {
             </button>
           </div>
           
-          <div class="add-section" style="flex: 1;">
+          <div class="add-section">
             <h3 class="section-title">Tambah Rencana Baru</h3>
             <form id="add-plan-form">
               <div class="form-group">
@@ -224,13 +67,165 @@ class RencanaPage {
         </div>
         
         <div id="loading" class="loading">
-          <p>⏳ Memuat data...</p>
+          <div class="spinner"></div>
+          <p>Memuat data...</p>
         </div>
         
         <div id="error-message" class="error-message"></div>
         
         <div id="plans-container"></div>
       </section>
+
+      <style>
+        .plans-container {
+          padding: 20px;
+          max-width: 1200px;
+          margin: 0 auto;
+        }
+        
+        .flex-container {
+          display: flex;
+          gap: 20px;
+          margin-bottom: 30px;
+        }
+        
+        .filter-section, .add-section {
+          flex: 1;
+          background: #f8f9fa;
+          padding: 20px;
+          border-radius: 8px;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .form-group {
+          margin-bottom: 15px;
+        }
+        
+        .plans-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+          gap: 20px;
+          margin-top: 20px;
+        }
+        
+        .plan-card {
+          background: white;
+          border-radius: 8px;
+          padding: 20px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .plan-actions {
+          display: flex;
+          gap: 10px;
+          margin-top: 15px;
+        }
+        
+        .modal {
+          display: block;
+          position: fixed;
+          z-index: 1000;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0,0,0,0.7);
+        }
+        
+        .modal-content {
+          background-color: #fefefe;
+          margin: 5% auto;
+          padding: 25px;
+          border-radius: 10px;
+          width: 85%;
+          max-width: 700px;
+          max-height: 85vh;
+          overflow-y: auto;
+          box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        
+        .close-modal {
+          color: #aaa;
+          float: right;
+          font-size: 28px;
+          font-weight: bold;
+          cursor: pointer;
+          transition: 0.3s;
+        }
+        
+        .close-modal:hover {
+          color: #333;
+        }
+        
+        .itinerary-view {
+          margin-top: 20px;
+        }
+        
+        .places-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+          gap: 15px;
+          margin-top: 15px;
+        }
+        
+        .place-card {
+          background: white;
+          border-radius: 8px;
+          padding: 15px;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .place-details {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+          margin: 10px 0;
+          font-size: 0.9em;
+          color: #555;
+        }
+        
+        .save-itinerary-section {
+          margin-top: 20px;
+          text-align: center;
+        }
+        
+        .loading {
+          display: none;
+          text-align: center;
+          padding: 20px;
+        }
+        
+        .spinner {
+          border: 5px solid #f3f3f3;
+          border-top: 5px solid #3498db;
+          border-radius: 50%;
+          width: 50px;
+          height: 50px;
+          animation: spin 1s linear infinite;
+          margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+        
+        .error-message {
+          display: none;
+          background-color: #ffebee;
+          color: #c62828;
+          padding: 15px;
+          border-radius: 4px;
+          margin: 15px 0;
+        }
+        
+        .success-message {
+          color: #2e7d32;
+          font-weight: bold;
+          text-align: center;
+          padding: 15px;
+        }
+      </style>
     `;
   }
 
@@ -242,15 +237,10 @@ class RencanaPage {
     const errorElement = document.getElementById('error-message');
     const plansContainer = document.getElementById('plans-container');
 
-    // Fungsi untuk render kartu rencana
-    const renderPlanCard = (plan) => {
-      // Debugging: Tampilkan seluruh object plan di console
-      console.log('Plan object:', plan);
-      
-      // Gunakan property yang sesuai dengan response API
+    const renderPlanCard = (plan, selectedCluster) => {
+      const clusterId = selectedCluster || plan.cluster_id || plan.cluster || 'N/A';
       const planName = plan.Place_Name || plan.name || 'Unnamed Plan';
       const description = plan.Description || plan.description || 'No description';
-      const clusterId = plan.cluster_id || plan.cluster || 'N/A';
       const days = plan.days || plan.total_days || 1;
 
       return `
@@ -262,10 +252,10 @@ class RencanaPage {
             <span class="days-badge">${days} Hari</span>
           </div>
           <div class="plan-actions">
-            <button class="action-btn info-btn generate-btn" data-cluster="${clusterId}">
+            <button class="action-btn info-btn generate-btn" data-cluster="${clusterId}" data-plan="${planName}">
               🗺️ Generate Itinerary
             </button>
-            <button class="action-btn secondary-btn recommend-btn" data-cluster="${clusterId}">
+            <button class="action-btn secondary-btn recommend-btn" data-cluster="${clusterId}" data-plan="${planName}">
               🔍 Rekomendasi
             </button>
           </div>
@@ -273,12 +263,10 @@ class RencanaPage {
       `;
     };
 
-    // Fungsi untuk memuat rencana
     const loadPlans = async () => {
       const clusterId = clusterFilter.value;
-      console.log(`Memuat rencana untuk cluster ${clusterId}...`);
       
-      loadingElement.style.display = 'block';
+      loadingElement.style.display = 'flex';
       errorElement.style.display = 'none';
       plansContainer.innerHTML = '';
 
@@ -288,11 +276,8 @@ class RencanaPage {
         if (clusterId === 'all') {
           try {
             const response = await getAllPlans();
-            console.log('Response all plans:', response);
             plans = response?.plans || response || [];
           } catch (error) {
-            console.warn('Gagal mengambil semua rencana, mencoba alternatif...');
-            // Fallback: Ambil per cluster lalu gabungkan
             const clusters = [0, 1, 2, 3];
             const allPlans = [];
             for (const cluster of clusters) {
@@ -303,14 +288,15 @@ class RencanaPage {
           }
         } else {
           const response = await getPlansByCluster(clusterId);
-          console.log(`Response cluster ${clusterId}:`, response);
           plans = response?.plans || response || [];
         }
 
-        console.log('Plans to render:', plans);
-        if (plans.length > 0) console.log('Contoh item pertama:', plans[0]);
+        if (!Array.isArray(plans)) {
+          console.error('Data plans bukan array:', plans);
+          plans = [];
+        }
 
-        if (!plans || plans.length === 0) {
+        if (plans.length === 0) {
           plansContainer.innerHTML = `
             <div class="empty-state">
               <p>📭 Tidak ada rencana perjalanan yang tersedia</p>
@@ -323,7 +309,7 @@ class RencanaPage {
         plansContainer.innerHTML = `
           <h3>Daftar Rencana ${clusterId === 'all' ? '' : 'Cluster ' + clusterId}</h3>
           <div class="plans-grid">
-            ${plans.map(plan => renderPlanCard(plan)).join('')}
+            ${plans.map(plan => renderPlanCard(plan, clusterId === 'all' ? null : clusterId)).join('')}
           </div>
         `;
 
@@ -336,10 +322,28 @@ class RencanaPage {
       }
     };
 
-    // Event listener untuk tombol muat rencana
+    const showModal = (title, content) => {
+      const modalHtml = `
+        <div class="modal">
+          <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3>${title}</h3>
+            <div class="modal-body">${content}</div>
+          </div>
+        </div>
+      `;
+      
+      document.body.insertAdjacentHTML('beforeend', modalHtml);
+      
+      const modal = document.querySelector('.modal');
+      const closeBtn = document.querySelector('.close-modal');
+      
+      closeBtn.addEventListener('click', () => modal.remove());
+      modal.addEventListener('click', (e) => e.target === modal && modal.remove());
+    };
+
     loadPlansBtn.addEventListener('click', loadPlans);
 
-    // Event listener untuk form tambah rencana
     addPlanForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       
@@ -351,30 +355,15 @@ class RencanaPage {
         days: parseInt(formData.get('days'))
       };
 
-      loadingElement.style.display = 'block';
+      loadingElement.style.display = 'flex';
       errorElement.style.display = 'none';
 
       try {
-        const result = await addPlan(newPlan.cluster_id, newPlan);
-        console.log('Plan added:', result);
-        
-        // Reset form
+        await addPlan(newPlan.cluster_id, newPlan);
         addPlanForm.reset();
-        
-        // Tampilkan pesan sukses
-        const successMsg = document.createElement('div');
-        successMsg.className = 'success-message';
-        successMsg.textContent = '✅ Rencana berhasil ditambahkan!';
-        plansContainer.prepend(successMsg);
-        
-        // Muat ulang daftar rencana
+        showModal('Sukses', '<div class="success-message">✅ Rencana berhasil ditambahkan!</div>');
         await loadPlans();
-        
-        // Hilangkan pesan setelah 3 detik
-        setTimeout(() => successMsg.remove(), 3000);
-        
       } catch (error) {
-        console.error('Error adding plan:', error);
         errorElement.textContent = `Gagal menambahkan rencana: ${error.message}`;
         errorElement.style.display = 'block';
       } finally {
@@ -382,21 +371,96 @@ class RencanaPage {
       }
     });
 
-    // Delegasi event untuk tombol generate itinerary dan rekomendasi
     plansContainer.addEventListener('click', async (e) => {
       const generateBtn = e.target.closest('.generate-btn');
       const recommendBtn = e.target.closest('.recommend-btn');
       
       if (generateBtn) {
         const clusterId = generateBtn.dataset.cluster;
-        loadingElement.style.display = 'block';
+        const planName = generateBtn.dataset.plan;
+        
+        loadingElement.style.display = 'flex';
+        errorElement.style.display = 'none';
         
         try {
-          const itinerary = await generateItinerary(clusterId);
-          console.log('Generated itinerary:', itinerary);
-          alert(`Itinerary untuk Cluster ${clusterId} berhasil digenerate!\n\nLihat console untuk detail.`);
+          const response = await generateItinerary(clusterId);
+          console.log('Itinerary Response:', response);
+          
+          let content;
+          if (response.itinerary && Array.isArray(response.itinerary)) {
+            content = `
+              <div class="itinerary-view">
+                <h3>${planName}</h3>
+                <p class="cluster-tag">Cluster ${clusterId} • ${response.itinerary.length} Tempat</p>
+                
+                <div class="places-grid">
+                  ${response.itinerary.map((place, index) => `
+                    <div class="place-card">
+                      <h4>${place.Place_Name || 'Tempat Wisata'}</h4>
+                      <div class="place-details">
+                        <span class="category">${place.Category || 'Kategori'}</span>
+                        <span class="city">📍 ${place.City || 'Lokasi'}</span>
+                        <span class="rating">⭐ ${place.Rating || '0'}</span>
+                        <span class="price">💰 ${place.Price === 0 ? 'Gratis' : `Rp${place.Price}`}</span>
+                      </div>
+                      <p class="day-info">Hari ke-${index + 1}</p>
+                    </div>
+                  `).join('')}
+                </div>
+                
+                <div class="save-itinerary-section">
+                  <button id="save-itinerary-btn" class="success-btn" 
+                    data-cluster="${clusterId}" 
+                    data-itinerary='${JSON.stringify(response.itinerary)}'
+                    data-plan-name="${planName}">
+                    💾 Simpan Itinerary
+                  </button>
+                </div>
+              </div>
+            `;
+          } else {
+            content = `
+              <div class="api-response">
+                <h4>${planName} (Cluster ${clusterId})</h4>
+                <pre>${JSON.stringify(response, null, 2)}</pre>
+              </div>
+            `;
+          }
+          
+          showModal(`Itinerary ${planName}`, content);
+          
+          // Tambahkan event listener untuk tombol simpan setelah modal muncul
+          setTimeout(() => {
+            const saveBtn = document.getElementById('save-itinerary-btn');
+            if (saveBtn) {
+              saveBtn.addEventListener('click', async () => {
+                try {
+                  const itineraryData = JSON.parse(saveBtn.dataset.itinerary);
+                  const planName = saveBtn.dataset.planName;
+                  const newPlan = {
+                    cluster_id: clusterId,
+                    name: `${planName} (Generated)`,
+                    description: `Itinerary otomatis untuk ${planName}`,
+                    days: itineraryData.length,
+                    places: itineraryData
+                  };
+                  
+                  loadingElement.style.display = 'flex';
+                  await addPlan(clusterId, newPlan);
+                  await loadPlans();
+                  document.querySelector('.modal')?.remove();
+                  showModal('Sukses', '<div class="success-message">✅ Itinerary berhasil disimpan!</div>');
+                } catch (error) {
+                  errorElement.textContent = `Gagal menyimpan itinerary: ${error.message}`;
+                  errorElement.style.display = 'block';
+                } finally {
+                  loadingElement.style.display = 'none';
+                }
+              });
+            }
+          }, 100);
+          
         } catch (error) {
-          console.error('Error generating itinerary:', error);
           errorElement.textContent = `Gagal generate itinerary: ${error.message}`;
           errorElement.style.display = 'block';
         } finally {
@@ -406,14 +470,49 @@ class RencanaPage {
       
       if (recommendBtn) {
         const clusterId = recommendBtn.dataset.cluster;
-        loadingElement.style.display = 'block';
+        const planName = recommendBtn.dataset.plan;
+        
+        loadingElement.style.display = 'flex';
+        errorElement.style.display = 'none';
         
         try {
-          const recommendations = await getRecommendations(clusterId);
-          console.log('Recommendations:', recommendations);
-          alert(`Rekomendasi untuk Cluster ${clusterId} berhasil dimuat!\n\nLihat console untuk detail.`);
+          const response = await getRecommendations(clusterId);
+          console.log('Recommendations Response:', response);
+          
+          let content;
+          if (Array.isArray(response)) {
+            content = `
+              <div class="recommendations-view">
+                <h3>Rekomendasi Wisata</h3>
+                <p class="cluster-tag">Cluster ${clusterId}</p>
+                
+                <div class="places-grid">
+                  ${response.map(place => `
+                    <div class="place-card">
+                      <h4>${place.Place_Name || place.nama_tempat || 'Tempat Wisata'}</h4>
+                      <div class="place-details">
+                        <span class="category">${place.Category || 'Kategori'}</span>
+                        <span class="city">📍 ${place.City || place.location || 'Lokasi'}</span>
+                        <span class="rating">⭐ ${place.Rating || '0'}</span>
+                        <span class="price">💰 ${place.Price === 0 ? 'Gratis' : `Rp${place.Price}`}</span>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            `;
+          } else {
+            content = `
+              <div class="api-response">
+                <h4>Rekomendasi ${planName} (Cluster ${clusterId})</h4>
+                <pre>${JSON.stringify(response, null, 2)}</pre>
+              </div>
+            `;
+          }
+          
+          showModal(`Rekomendasi ${planName}`, content);
+          
         } catch (error) {
-          console.error('Error getting recommendations:', error);
           errorElement.textContent = `Gagal memuat rekomendasi: ${error.message}`;
           errorElement.style.display = 'block';
         } finally {
@@ -422,7 +521,7 @@ class RencanaPage {
       }
     });
 
-    // Muat rencana secara otomatis saat pertama kali load
+    // Load data awal
     await loadPlans();
   }
 }
