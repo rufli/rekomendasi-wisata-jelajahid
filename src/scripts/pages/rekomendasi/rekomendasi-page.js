@@ -53,7 +53,7 @@ class RekomendasiPage {
     const applyFilterButton = document.querySelector('#apply-filter-button');
     const contentTitle = document.querySelector('#content-title');
 
-    // Initial loading state
+    
     this._renderRecommendations(recommendationListContainer, []); // Clear previous content
     recommendationListContainer.innerHTML = `
       <div class="loading-message">
@@ -62,10 +62,7 @@ class RekomendasiPage {
     `;
 
     try {
-      // Fetch all recommendations initially (assuming getRecommendations can fetch all or a large set)
-      // If getRecommendations only fetches based on clusterId, you might need a different API for all data
-      // For now, let's assume getRecommendations(null) or getRecommendations() gets all if clusterId is not relevant for initial fetch
-      const clusterId = 2; // Keep it if it's for personalization after initial load, or make it dynamic
+      const clusterId = 2; 
       const allItems = await getRecommendations(clusterId);
       console.log('✅ Data rekomendasi asli:', allItems);
 
@@ -75,15 +72,11 @@ class RekomendasiPage {
       }
 
       this._originalRecommendations = allItems;
-      this._populateFilters(allItems); // Populate filter options
-      this._applyFiltersAndRender(); // Apply initial filters (none) and render
+      this._populateFilters(allItems); 
+      this._applyFiltersAndRender(); 
 
-      // Add event listeners for filters
       applyFilterButton.addEventListener('click', () => this._applyFiltersAndRender());
-      // Optional: Add change listeners for live filtering (without button click)
-      // cityFilter.addEventListener('change', () => this._applyFiltersAndRender());
-      // categoryFilter.addEventListener('change', () => this._applyFiltersAndRender());
-      // sortFilter.addEventListener('change', () => this._applyFiltersAndRender());
+     
 
     } catch (error) {
       console.error('Error detail:', error);
